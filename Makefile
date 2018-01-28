@@ -1,4 +1,4 @@
-TARGET = hello
+TARGET = a.out
 SOURCE = main.cpp
 
 VER = -std=c++11
@@ -8,4 +8,3 @@ $(TARGET): $(SOURCE)
 
 clean:
 	rm -f $(TARGET)
-
