@@ -16,8 +16,9 @@ public:
 	T* PopBack();
 	T* PopFront();
 	T& operator[](size_t i) const;
-	
-	friend void DebugPrint(const CircularArray<int>& arr);
+
+	template<typename U>
+	friend void DebugPrint(const CircularArray<U>& arr);
 private:
 	std::unique_ptr<int[]> data;
 	const size_t capacity;
@@ -52,31 +53,34 @@ size_t CircularArray<T>::Capacity()
 template<typename T>
 size_t CircularArray<T>::Size()
 {
-	if(Empty()) return 0;	
-	
+	if(Empty()) return 0;
+
 	//calculate circular index of last element, and add 1
 	return (i_end-i_begin)%capacity + 1;
 }
 
-T* CircularArray::PushBack(const T e)
+template<typename T>
+T* CircularArray<T>::PushBack(const T e)
 {
 	if(Full()) return nullptr;
 	if(Empty()) data[i_end %= capacity] = e;
 	else data[i_end = (i_end+1)%capacity] = e;
-	
+
 	return data.get() + i_end;
 }
 
-T* CircularArray::PushFront(const T e)
+template<typename T>
+T* CircularArray<T>::PushFront(const T e)
 {
 	if(Full()) return nullptr;
 	if(Empty()) data[i_end %= capacity] = e;
 	else data[i_begin = (i_begin-1)%capacity] = e;
-	
+
 	return data.get() + i_begin;
 }
 
-T* CircularArray::PopBack()
+template<typename T>
+T* CircularArray<T>::PopBack()
 {
 	if(Empty()) return nullptr;
 
@@ -86,7 +90,8 @@ T* CircularArray::PopBack()
 	return pPopped;
 }
 
-T* CircularArray::PopFront()
+template<typename T>
+T* CircularArray<T>::PopFront()
 {
 	if(Empty()) return nullptr;
 
@@ -94,4 +99,10 @@ T* CircularArray::PopFront()
 	i_begin = (i_begin+1)%capacity;
 	if(i_begin == i_end) i_end+=capacity; //mark array as empty
 	return pPopped;
+}
+
+template<typename T>
+T& CircularArray<T>::operator[](size_t i) const
+{
+	return data[(i_begin+i)%capacity];
 }
