@@ -12,12 +12,12 @@ struct CircularArray
 };
 
 /**
-	TODO: Proper doxygen
 	Convert circular array index to linear data array index
 	
-	Argument is circular array index 
+	\param arr Circular array
+	\param circularIndex The public interface circlar array index
 	
-	Returns linear data array index
+	\return Corresponding index for the underlying linear data array.
 */
 size_t Index(const CircularArray& arr, size_t circularIndex)
 {
@@ -25,10 +25,13 @@ size_t Index(const CircularArray& arr, size_t circularIndex)
 }
 
 /**
-	For completeness sake.
 	Convert linear data index to circular index.
+	For completeness sake.
 	
-	TODO: doxygen
+	\param arr Circular array
+	\param linearIndex Index for the underlying linear data structure
+	
+	\return Corresponding circular array index
 */
 size_t Index2(const CircularArray& arr, size_t linearIndex)
 {
@@ -37,6 +40,11 @@ size_t Index2(const CircularArray& arr, size_t linearIndex)
 
 /**
 	Returns an element pointer from an circular array index
+	
+	\param arr Circular array
+	\param i Circular array index
+	
+	\return Pointer to element at index i
 */
 T* PointerFromIndex(const CircularArray& arr, size_t i)
 {
