@@ -11,10 +11,9 @@ struct CircularArray
 	T* end = data;
 };
 
-//T* PointerFromIndex(const CircularArray& arr, size_t i)
-T* PointerFromIndex(CircularArray& arr, size_t i)
+T* PointerFromIndex(const CircularArray& arr, size_t i)
 {
-	return (arr.beginning+i-arr.data)%capacity + arr.data;
+	return const_cast<T*>((arr.beginning+i-arr.data)%capacity + arr.data);
 }
 
 size_t IndexFromPointer(const CircularArray& arr, const T* p)
@@ -66,7 +65,7 @@ T* PopFront(CircularArray& arr)
 	return old;
 }
 
-void DebugPrint(CircularArray& arr)
+void DebugPrint(const CircularArray& arr)
 {
 	std::cout<<"data:";
 	for(int i=0; i<capacity; i++) std::cout << " " << arr.data[i];
