@@ -1,7 +1,7 @@
 #include <iostream>
-#include "circulararray.h"
+#include "circulararray_template.h"
 
-void DebugPrint(const CircularArray& arr)
+void DebugPrint(const CircularArray<int>& arr)
 {
 	std::cout<<"data:";
 	for(int i=0; i<arr.capacity; i++) std::cout << " " << arr.data[i];
@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 {
 	std::cout << "circular_array" << std::endl;
 
-	CircularArray ring;
+	CircularArray<int> ring;
 	
 	std::cout << "Size: " << ring.Size() << " Expect: 0\n";
 	
