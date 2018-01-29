@@ -11,6 +11,7 @@ public:
 	bool Empty();
 	bool Full();
 	size_t Capacity();
+	size_t Size();
 	T* PushBack(const T e);
 	T* PushFront(const T e);
 	T* PopBack();

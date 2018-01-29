@@ -20,6 +20,14 @@ size_t CircularArray::Capacity()
 	return capacity;
 }
 
+size_t CircularArray::Size()
+{
+	if(Empty()) return 0;	
+	
+	//calculate circular index of last element, and add 1
+	return (i_end-i_begin)%capacity + 1;
+}
+
 T* CircularArray::PushBack(const T e)
 {
 	if(Full()) return nullptr;
