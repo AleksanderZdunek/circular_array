@@ -20,7 +20,7 @@ public:
 	template<typename U>
 	friend void DebugPrint(const CircularArray<U>& arr);
 private:
-	std::unique_ptr<int[]> data;
+	std::unique_ptr<T[]> data;
 	const size_t capacity;
 	size_t i_begin;
 	size_t i_end;
