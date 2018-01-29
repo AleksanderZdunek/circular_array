@@ -2,67 +2,94 @@
 
 typedef int T;
 
-const size_t capacity = 16; //capacity should be greater than 1. If capacity == 1 Empty() and Full() will both return true and push and pop will always fail.
+const size_t capacity = 16;
 
 struct CircularArray
 {
 	T data[capacity];
-	T* beginning = data;
-	T* end = data;
+	size_t i_begin = 0;
+	size_t i_end = i_begin+capacity; //let i_end == i_begin+capacity indicate empty list, since this is a value i_end should normally never attain
 };
 
-T* PointerFromIndex(const CircularArray& arr, size_t i)
+/**
+	TODO: Proper doxygen
+	Convert circular array index to linear data array index
+	
+	Argument is circular array index 
+	
+	Returns linear data array index
+*/
+size_t Index(const CircularArray& arr, size_t circularIndex)
 {
-	return const_cast<T*>((arr.beginning+i-arr.data)%capacity + arr.data);
+	return (arr.i_begin+circularIndex)%capacity;
 }
 
-size_t IndexFromPointer(const CircularArray& arr, const T* p)
+/**
+	For completeness sake.
+	Convert linear data index to circular index.
+	
+	TODO: doxygen
+*/
+size_t Index2(const CircularArray& arr, size_t linearIndex)
 {
-	return (p-arr.beginning)%capacity;
+	return (linearIndex-arr.i_begin)%capacity;
+}
+
+/**
+	Returns an element pointer from an circular array index
+*/
+T* PointerFromIndex(const CircularArray& arr, size_t i)
+{
+	return const_cast<T*>(arr.data+Index(arr, i));
 }
 
 bool Empty(const CircularArray& arr)
 {
-	return arr.beginning == arr.end;
+	return capacity == arr.i_end-arr.i_begin;
 }
 
 bool Full(const CircularArray& arr)
 {
-	return ((arr.end+1 - arr.data)%capacity + arr.data) == arr.beginning;
+	return (arr.i_end+1)%capacity == arr.i_begin;
 }
 
-T* PushBack(CircularArray& arr, const T& e)
+T* PushBack(CircularArray& arr, const T e)
 {
 	if(Full(arr)) return nullptr;
-
-	*(arr.end=((arr.end+1-arr.data)%capacity+arr.data)) = e;
-	return arr.end;
+	if(Empty(arr)) arr.data[arr.i_end %= capacity] = e;
+	else arr.data[arr.i_end = (arr.i_end+1)%capacity] = e;
+	
+	return arr.data + arr.i_end;
 }
 
-T* PushFront(CircularArray& arr, const T& e)
+
+T* PushFront(CircularArray& arr, const T e)
 {
 	if(Full(arr)) return nullptr;
-
-	*(arr.beginning=((arr.beginning-1-arr.data)%capacity+arr.data)) = e;
-	return arr.beginning;
+	if(Empty(arr)) arr.data[arr.i_end %= capacity] = e;
+	else arr.data[arr.i_begin = (arr.i_begin-1)%capacity] = e;
+	
+	return arr.data + arr.i_begin;
 }
 
 T* PopBack(CircularArray& arr)
 {
 	if(Empty(arr)) return nullptr;
 
-	T* old = arr.end;
-	arr.end = (arr.end-1-arr.data)%capacity+arr.data;
-	return old;
+	T* pPopped = arr.data + arr.i_end;
+	arr.i_end = (arr.i_end-1)%capacity;
+	if(arr.i_begin == arr.i_end) arr.i_end+=capacity; //mark array as empty
+	return pPopped;
 }
 
 T* PopFront(CircularArray& arr)
 {
 	if(Empty(arr)) return nullptr;
 
-	T* old = arr.beginning;
-	arr.beginning = (arr.beginning+1-arr.data)%capacity+arr.data;
-	return old;
+	T* pPopped = arr.data+arr.i_begin;
+	arr.i_begin = (arr.i_begin+1)%capacity;
+	if(arr.i_begin == arr.i_end) arr.i_end+=capacity; //mark array as empty
+	return pPopped;
 }
 
 void DebugPrint(const CircularArray& arr)
@@ -70,7 +97,7 @@ void DebugPrint(const CircularArray& arr)
 	std::cout<<"data:";
 	for(int i=0; i<capacity; i++) std::cout << " " << arr.data[i];
 	std::cout<<"\nidxd:";
-	for(int i=0; i<capacity; i++) std::cout << " " << *PointerFromIndex(arr, i);
+	for(int i=0; i<capacity; i++) std::cout << " " << *PointerFromIndex(arr, i); //std::cout << " " << arr.data[Index(arr,i)];
 	std::cout<<std::endl;
 }
 
@@ -78,11 +105,57 @@ int main(int argc, char* argv[])
 {
 	std::cout << "circular_array" << std::endl;
 
-	CircularArray ca;
-
-	for(int i=0; i<capacity; i++) PushBack(ca, i);
-
-	DebugPrint(ca);
+	CircularArray ring;
+	
+	for(int i=0; i<capacity; i+=2) PushBack(ring, i), PushFront(ring, i+1);
+	
+	DebugPrint(ring);
+	
+	PopBack(ring), PopBack(ring);
+	
+	PushFront(ring, 33), PushFront(ring, 44), PushFront(ring, 55);
+	
+	DebugPrint(ring);
 
 	return 0;
+}
+
+void stashed()
+{
+	CircularArray ring;
+	
+	for(int i=0; i<capacity; i++) PushBack(ring, i);
+
+	DebugPrint(ring);
+	
+	std::cout << "PopFront()\n";
+	PopFront(ring);
+	DebugPrint(ring);
+	
+	std::cout << "PushBack(16)\n";
+	PushBack(ring, 16);
+	DebugPrint(ring);
+	
+	
+	for(int i=0; i<capacity-10; i++) PopFront(ring);
+	for(int i=0; i<capacity; i++) PushBack(ring, i+20);
+	DebugPrint(ring);
+}
+
+
+void stashed2()
+{
+	CircularArray ring;
+	
+	for(int i=0; i<capacity; i++) PushBack(ring, i);
+
+	for(int i=0; i<=5; i++) PopFront(ring);
+
+	DebugPrint(ring);
+	
+	for(int i=0; i<capacity; i++) std::cout << " " << Index(ring, i);
+	std::cout << std::endl;
+	for(int i=0; i<capacity; i++) std::cout << " " << Index2(ring, i);
+	
+	std::cout << std::endl;
 }
