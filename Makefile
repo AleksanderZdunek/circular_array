@@ -1,6 +1,6 @@
 TARGET = a.out
-SOURCE = main.cpp circulararray.cpp
-HEADER = circulararray.h circulararray_template.h
+SOURCE = main.cpp
+HEADER = circulararray_template.h
 
 VER = -std=c++11
 
