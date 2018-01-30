@@ -19,6 +19,7 @@ public:
 
 	template<typename U>
 	friend void DebugPrint(const CircularArray<U>& arr);
+
 private:
 	std::unique_ptr<T[]> data;
 	const size_t capacity;
@@ -27,15 +28,15 @@ private:
 };
 
 template<typename T>
-CircularArray<T>::CircularArray(const size_t capacity): capacity(capacity), data(new T[capacity]), i_begin(0), i_end(i_begin+capacity)
+CircularArray<T>::CircularArray(const size_t capacity): capacity(capacity), data(new T[capacity]), i_begin(0), i_end(capacity)
 {
 }
 
 template<typename T>
 bool CircularArray<T>::Empty()
 {
-	//let i_end == i_begin+capacity indicate empty list, since this is a value i_end should normally never attain
-	return i_begin+capacity == i_end;
+	//let i_end == capacity indicate empty list, since this is a value i_end should normally never attain. Remember that max(i_end) == capacity - 1.
+	return capacity == i_end;
 }
 
 template<typename T>
@@ -56,14 +57,14 @@ size_t CircularArray<T>::Size()
 	if(Empty()) return 0;
 
 	//calculate circular index of last element, and add 1
-	return (i_end-i_begin)%capacity + 1;
+	return (i_end+capacity-i_begin)%capacity + 1;
 }
 
 template<typename T>
 T* CircularArray<T>::PushBack(const T e)
 {
 	if(Full()) return nullptr;
-	if(Empty()) data[i_end %= capacity] = e;
+	if(Empty()) data[i_end = i_begin] = e;
 	else data[i_end = (i_end+1)%capacity] = e;
 
 	return data.get() + i_end;
@@ -73,7 +74,7 @@ template<typename T>
 T* CircularArray<T>::PushFront(const T e)
 {
 	if(Full()) return nullptr;
-	if(Empty()) data[i_end %= capacity] = e;
+	if(Empty()) data[i_end = i_begin] = e;
 	else data[i_begin = (i_begin-1)%capacity] = e;
 
 	return data.get() + i_begin;
@@ -85,8 +86,8 @@ T* CircularArray<T>::PopBack()
 	if(Empty()) return nullptr;
 
 	T* pPopped = data.get() + i_end;
-	i_end = (i_end-1)%capacity;
-	if(i_begin == i_end) i_end+=capacity; //mark array as empty
+	if(1==Size()) i_end = capacity; //mark array as empty
+	else i_end = (i_end-1)%capacity;
 	return pPopped;
 }
 
@@ -96,8 +97,8 @@ T* CircularArray<T>::PopFront()
 	if(Empty()) return nullptr;
 
 	T* pPopped = data.get() + i_begin;
-	i_begin = (i_begin+1)%capacity;
-	if(i_begin == i_end) i_end+=capacity; //mark array as empty
+	if(1==Size()) i_end = capacity;	//mark array as empty
+	i_begin = (i_begin+1)%capacity; //note the lack of symetry of this line compared the to corresponding line in PopBack(), where the line is else conditional
 	return pPopped;
 }
 
