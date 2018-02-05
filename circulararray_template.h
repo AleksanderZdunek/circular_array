@@ -42,6 +42,7 @@ bool CircularArray<T>::Empty()
 template<typename T>
 bool CircularArray<T>::Full()
 {
+	if(Empty()) return false;
 	return (i_end+1)%capacity == i_begin;
 }
 
